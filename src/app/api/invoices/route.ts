@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { invoices, invoiceItems, jobs, customers } from '@/db/schema';
+import { invoices, invoiceItems, jobs, customers } from "@/db";
 import { eq, desc } from 'drizzle-orm';
 import { createInvoiceSchema } from '@/lib/validations';
 import { sql } from 'drizzle-orm';

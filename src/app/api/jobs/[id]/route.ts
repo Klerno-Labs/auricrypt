@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { jobs, updateJobStatusSchema } from '@/db/schema';
+import { jobs, updateJobStatusSchema } from "@/db";
 import { eq } from 'drizzle-orm';
 
 /**

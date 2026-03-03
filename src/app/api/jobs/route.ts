@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { jobs, users, customers } from '@/db/schema';
+import { jobs, users, customers } from "@/db";
 import { eq, and, gte, lte, desc } from 'drizzle-orm';
 import { createJobSchema } from '@/lib/validations';
 

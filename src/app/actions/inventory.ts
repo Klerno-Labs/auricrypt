@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { inventory, products } from '@/db/schema';
+import { inventory, products } from "@/db";
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 

@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { inventory, inventoryLogs, jobs } from '@/db/schema';
+import { inventory, inventoryLogs, jobs } from "@/db";
 import { eq, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
