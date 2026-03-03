@@ -4,6 +4,8 @@ import { users } from '@/lib/db/schema';
 import bcrypt from 'bcrypt';
 import { registerSchema } from '@/lib/validations/auth';
 
+import { eq } from "drizzle-orm";
+import { z } from "zod";
 export async function POST(req: Request) {
   try {
     const body = await req.json();

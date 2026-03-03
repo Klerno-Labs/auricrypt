@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from 'next-auth';
 import { NextResponse } from 'next/server';
 
+import { redirect } from "next/navigation";
 export const authConfig = {
   pages: {
     signIn: '/login',
