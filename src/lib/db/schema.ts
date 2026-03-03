@@ -1,59 +1,57 @@
-import { pgTable, text, timestamp, uuid, enum as pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, integer, decimal, pgEnum } from 'drizzle-orm/pg-core';
 
-export const UserRole = pgEnum('user_role', ['OWNER', 'MANAGER', 'STAFF']);
+export const userRoleEnum = pgEnum('user_role', ['owner', 'manager', 'staff']);
+export const jobStatusEnum = pgEnum('job_status', ['scheduled', 'in-progress', 'completed', 'cancelled']);
+export const invoiceStatusEnum = pgEnum('invoice_status', ['draft', 'pending', 'paid', 'refunded']);
 
 export const users = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
-  password: text('password'),
-  emailVerified: timestamp('emailVerified', { mode: 'date' }),
-  image: text('image'),
-  role: UserRole('role').notNull().default('STAFF'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  passwordHash: text('password_hash').notNull(),
+  role: userRoleEnum('role').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
 });
 
-export const accounts = pgTable(
-  'accounts',
-  {
-    userId: uuid('user_id')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    type: text('type').notNull(),
-    provider: text('provider').notNull(),
-    providerAccountId: text('provider_account_id').notNull(),
-    refresh_token: text('refresh_token'),
-    access_token: text('access_token'),
-    expires_at: timestamp('expires_at', { mode: 'date' }),
-    token_type: text('token_type'),
-    scope: text('scope'),
-    id_token: text('id_token'),
-    session_state: text('session_state'),
-  },
-  (account) => ({
-    compoundKey: { name: 'compoundKey', columns: [account.provider, account.providerAccountId] },
-  })
-);
-
-export const sessions = pgTable('sessions', {
-  sessionToken: text('session_token').primaryKey(),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  expires: timestamp('expires', { mode: 'date' }).notNull(),
+export const jobs = pgTable('jobs', {
+  id: text('id').primaryKey(),
+  customerId: text('customer_id').notNull(),
+  customerName: text('customer_name').notNull(),
+  address: text('address').notNull(),
+  scheduledTime: timestamp('scheduled_time').notNull(),
+  estimatedDuration: integer('estimated_duration').notNull(),
+  status: jobStatusEnum('status').notNull(),
+  assignedStaffId: text('assigned_staff_id').notNull().references(() => users.id),
+  notes: text('notes'),
+  price: decimal('price', { precision: 10, scale: 2 }),
+  createdAt: timestamp('created_at').defaultNow(),
 });
 
-export const verificationTokens = pgTable(
-  'verification_tokens',
-  {
-    identifier: text('identifier').notNull(),
-    token: text('token').notNull(),
-    expires: timestamp('expires', { mode: 'date' }).notNull(),
-  },
-  (vt) => ({
-    compoundKey: { name: 'compoundKey', columns: [vt.identifier, vt.token] },
-  })
-);
+export const inventory = pgTable('inventory', {
+  id: text('id').primaryKey(),
+  sku: text('sku').notNull().unique(),
+  name: text('name').notNull(),
+  description: text('description'),
+  costPrice: decimal('cost_price', { precision: 10, scale: 2 }).notNull(),
+  sellPrice: decimal('sell_price', { precision: 10, scale: 2 }).notNull(),
+  stockOnHand: integer('stock_on_hand').notNull(),
+  truckId: text('truck_id').notNull(),
+  lowStockThreshold: integer('low_stock_threshold').notNull(),
+});
 
-export type User = typeof users.$inferSelect;
+export const invoices = pgTable('invoices', {
+  id: text('id').primaryKey(),
+  jobId: text('job_id').notNull().references(() => jobs.id),
+  customerId: text('customer_id').notNull(),
+  customerEmail: text('customer_email').notNull(),
+  items: text('items').notNull(), // Stored as JSON string
+  laborCharge: decimal('labor_charge', { precision: 10, scale: 2 }).notNull(),
+  taxRate: decimal('tax_rate', { precision: 5, scale: 4 }).notNull(),
+  subtotal: decimal('subtotal', { precision: 10, scale: 2 }).notNull(),
+  taxAmount: decimal('tax_amount', { precision: 10, scale: 2 }).notNull(),
+  total: decimal('total', { precision: 10, scale: 2 }).notNull(),
+  status: invoiceStatusEnum('status').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  paidAt: timestamp('paid_at'),
+  paymentMethod: text('payment_method'),
+});
