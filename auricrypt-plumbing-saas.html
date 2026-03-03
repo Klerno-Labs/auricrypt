@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auricrypt | Plumbing SaaS Dashboard</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            /* Brand Colors - Professional Blue/Grey/White */
+            --primary: #0284c7; /* Sky 600 */
+            --primary-dark: #0369a1;
+            --primary-light: #e0f2fe;
+            --secondary: #475569; /* Slate 600 */
+            --background: #f1f5f9; /* Slate 100 */
+            --surface: #ffffff;
+            --text-main: #0f172a; /* Slate 900 */
+            --text-muted: #64748b; /* Slate 500 */
+            --border: #e2e8f0; /* Slate 200 */
+            
+            /* Status Colors */
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --info: #3b82f6;
+
+            /* Spacing & Layout */
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--background);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* --- UTILITIES --- */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .w-full { width: 100%; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .text-muted { color: var(--text-muted); }
+        .text-primary { color: var(--primary); }
+        .text-danger { color: var(--danger); }
+        .text-success { color: var(--success); }
+        
+        /* --- BUTTONS & INPUTS --- */
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+
+        .btn-secondary {
+            background-color: white;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        .btn-secondary:hover { background-color: var(--background); }
+
+        .btn-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+        }
+        .btn-danger:hover { background-color: #fecaca; }
+
+        .btn-sm { padding: 0.25rem 0.75rem; font-size: 0.75rem; }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        /* --- LAYOUT --- */
+        /* Login Screen */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--background);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* App Layout */
+        #app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Sidebar */
+        aside {
+            width: var(--sidebar-width);
+            background-color: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+            transition: transform 0.3s ease;
+        }
+
+        .brand {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-links {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .user-profile {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            height: var(--header-height);
+            background-color: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        /* --- DASHBOARD COMPONENTS --- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
+        .stat-label { font-size: 0.875rem; color: var(--text-muted); }
+
+        /* Tables */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--background);
+            padding: 0.75rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 0.875rem;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: #f8fafc; }
+
+        .badge {
+            display: inline-flex;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: var(--success-bg); color: var(--success); }
+        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+        .badge-info { background: #eff6ff; color: var(--info); }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: var(--border);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .calendar-day-header {
+            background: white;
+            padding: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 120px;
+            padding: 0.5rem;
+            position: relative;
+        }
+
+        .calendar-day:hover { background-color: #f8fafc; }
+        .day-number { font-weight: 600; color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem; }
+        
+        .job-chip {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 0.25rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-md);
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.875rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* Toast */
+        #toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: var(--text-main);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            box-shadow: var(--shadow-md);
+            animation: slideUp 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            aside { position: absolute; height: 100%; transform: translateX(-100%); }
+            aside.open { transform: translateX(0); }
+            .grid-3 { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            header { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-card">
+            <div style="margin-bottom: 1.5rem; color: var(--primary);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                </svg>
+            </div>
+            <h1 style="margin-bottom: 0.5rem; font-size: 1.5rem;">Auricrypt</h1>
+            <p class="text-muted" style="margin-bottom: 2rem;">Plumbing Management Portal</p>
+            
+            <form id="login-form" class="flex flex-col gap-4">
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="login-email" placeholder="staff@auricrypt.com" value="staff@auricrypt.com" required>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" value="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Sign In</button>
+            </form>
+            <div class="mt-4 text-xs text-muted">
+                Demo: owner@auricrypt.com / manager@auricrypt.com / staff@auricrypt.com (pw: password)
+            </div>
+        </div>
+    </div>
+
+    <!-- APP CONTAINER (Hidden initially) -->
+    <div id="app-container" class="hidden">
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
+            <div class="brand">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                </svg>
+                Auricrypt
+            </div>
+            
+            <nav class="nav-links">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-view="calendar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Calendar
+                </a>
+                <a href="#" class="nav-item" data-view="jobs">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Jobs
+                </a>
+                <a href="#" class="nav-item" data-view="inventory">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    Truck Inventory
+                </a>
+                <a href="#" class="nav-item" data-view="invoices">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Invoices
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div class="avatar" id="user-avatar">US</div>
+                <div style="flex: 1; overflow: hidden;">
+                    <div class="font-semibold text-sm" id="user-name">User Name</div>
+                    <div class="text-xs text-muted" id="user-role">Role</div>
+                </div>
+                <button id="logout-btn" title="Logout" style="color: var(--text-muted);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main>
+            <header>
+                <div class="flex items-center gap-4">
+                    <button id="menu-toggle" class="md:hidden">
+                        <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h2 class="font-bold text-lg" id="page-title">Dashboard</h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="badge badge-info" id="date-display"></span>
+                </div>
+            </header>
+
+            <div class="content-area" id="main-content">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modal-container" class="hidden modal-overlay"></div>
+
+    <!-- TOASTS -->
+    <div id="toast-container"></div>
+
+    <!-- SCRIPTS -->
+    <script>
+        /**
+         * APPLICATION STATE
+         * Simulates a backend database using LocalStorage
+         */
+        const MOCK_DATA = {
+            users: [
+                { id: 1, name: 'Chris Hatfield', email: 'owner@auricrypt.com', role: 'owner' },
+                { id: 2, name: 'Sarah Manager', email: 'manager@auricrypt.com', role: 'manager' },
+                { id: 3, name: 'Joe Plumber', email: 'staff@auricrypt.com', role: 'staff' }
+            ],
+            inventory: [
+                { id: 1, name: 'Copper Pipe 1/2"', sku: 'CP-050', qty: 45, price: 12.50 },
+                { id: 2, name: 'PVC Pipe 3"', sku: 'PVC-003', qty: 12, price: 8.00 },
+                { id: 3, name: 'Faucet Cartridge', sku: 'FC-STD', qty: 8, price: 24.00 },
+                { id: 4, name: 'Water Heater Element', sku: 'WHE-4500', qty: 2, price: 45.00 },
+                { id: 5, name: 'Teflon Tape', sku: 'TT-1', qty: 50, price: 2.50 }
+            ],
+            jobs: [
+                { id: 101, customerId: 1, customerName: 'Alice Johnson', address: '123 Main St', date: new Date().toISOString().split('T')[0], status: 'Scheduled', notes: 'Leaking kitchen sink', assignedTo: 3 },
+                { id: 102, customerId: 2, customerName: 'Bob Smith', address: '456 Oak Ave', date: new Date().toISOString().split('T')[0], status: 'In Progress', notes: 'Install new water heater', assignedTo: 3 },
+                { id: 103, customerId: 3, customerName: 'Charlie Davis', address: '789 Pine Rd', date: '2023-12-01', status: 'Completed', notes: 'Clogged drain', assignedTo: 3 }
+            ],
+            invoices: [
+                { id: 501, jobId: 103, customerName: 'Charlie Davis', amount: 150.00, status: 'Paid', date: '2023-12-01' }
+            ]
+        };
+
+        class AppState {
+            constructor() {
+                this.load();
+                if (!this.data.users) this.data = JSON.parse(JSON.stringify(MOCK_DATA));
+                this.currentUser = null;
+            }
+
+            load() {
+                const stored = localStorage.getItem('auricrypt_db');
+                this.data = stored ? JSON.parse(stored) : {};
+            }
+
+            save() {
+                localStorage.setItem('auricrypt_db', JSON.stringify(this.data));
+            }
+
+            login(email) {
+                const user = this.data.users.find(u => u.email === email);
+                if (user) {
+                    this.currentUser = user;
+                    localStorage.setItem('auricrypt_user', JSON.stringify(user));
+                    return true;
+                }
+                return false;
+            }
+
+            logout() {
+                this.currentUser = null;
+                localStorage.removeItem('auricrypt_user');
+            }
+
+            checkSession() {
+                const stored = localStorage.getItem('auricrypt_user');
+                if (stored) this.currentUser = JSON.parse(stored);
+            }
+
+            // CRUD Helpers
+            addJob(job) {
+                job.id = Date.now();
+                job.status = 'Scheduled';
+                this.data.jobs.push(job);
+                this.save();
+                return job;
+            }
+
+            updateJobStatus(id, status) {
+                const job = this.data.jobs.find(j => j.id === id);
+                if (job) {
+                    job.status = status;
+                    this.save();
+                }
+            }
+
+            deductInventory(itemId, qty) {
+                const item = this.data.inventory.find(i => i.id === itemId);
+                if (item && item.qty >= qty) {
+                    item.qty -= qty;
+                    this.save();
+                    return true;
+                }
+                return false;
+            }
+            
+            addInventory(item) {
+                item.id = Date.now();
+                this.data.inventory.push(item);
+                this.save();
+            }
+        }
+
+        const store = new AppState();
+
+        /**
+         * DOM & NAVIGATION
+         */
+        const els = {
+            loginScreen: document.getElementById('login-screen'),
+            appContainer: document.getElementById('app-container'),
+            loginForm: document.getElementById('login-form'),
+            sidebar: document.getElementById('sidebar'),
+            navItems: document.querySelectorAll('.nav-item'),
+            mainContent: document.getElementById('main-content'),
+            pageTitle: document.getElementById('page-title'),
+            userName: document.getElementById('user-name'),
+            userRole: document.getElementById('user-role'),
+            userAvatar: document.getElementById('user-avatar'),
+            dateDisplay: document.getElementById('date-display'),
+            modalContainer: document.getElementById('modal-container'),
+            toastContainer: document.getElementById('toast-container'),
+            logoutBtn: document.getElementById('logout-btn'),
+            menuToggle: document.getElementById('menu-toggle')
+        };
+
+        // Initialize
+        store.checkSession();
+        if (store.currentUser) {
+            showApp();
+        }
+
+        els.dateDisplay.textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+        // Event Listeners
+        els.loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            if (store.login(email)) {
+                showApp();
+                showToast(`Welcome back, ${store.currentUser.name}`);
+            } else {
+                showToast('Invalid credentials', 'error');
+            }
+        });
+
+        els.logoutBtn.addEventListener('click', () => {
+            store.logout();
+            location.reload();
+        });
+
+        els.menuToggle.addEventListener('click', () => {
+            els.sidebar.classList.toggle('open');
+        });
+
+        els.navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                // UI Update
+                els.navItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Render View
+                const view = item.dataset.view;
+                renderView(view);
+
+                // Close mobile menu
+                els.sidebar.classList.remove('open');
+            });
+        });
+
+        function showApp() {
+            els.loginScreen.classList.add('hidden');
+            els.appContainer.classList.remove('hidden');
+            
+            // Set User Info
+            els.userName.textContent = store.currentUser.name;
+            els.userRole.textContent = store.currentUser.role.charAt(0).toUpperCase() + store.currentUser.role.slice(1);
+            els.userAvatar.textContent = store.currentUser.name.split(' ').map(n=>n[0]).join('');
+
+            // Permission Check: Hide/Show nav items based on role could go here
+            // For now, showing all for demo purposes
+
+            renderView('dashboard');
+        }
+
+        /**
+         * VIEW RENDERING
+         */
+        function renderView(view) {
+            els.mainContent.innerHTML = '';
+            els.pageTitle.textContent = view.charAt(0).toUpperCase() + view.slice(1);
+
+            switch(view) {
+                case 'dashboard': renderDashboard(); break;
+                case 'calendar': renderCalendar(); break;
+                case 'jobs': renderJobs(); break;
+                case 'inventory': renderInventory(); break;
+                case 'invoices': renderInvoices(); break;
+            }
+        }
+
+        // --- DASHBOARD VIEW ---
+        function renderDashboard() {
+            const jobs = store.data.jobs;
+            const today = new Date().toISOString().split('T')[0];
+            const todayJobs = jobs.filter(j => j.date === today);
+            const revenue = store.data.invoices.reduce((sum, inv) => sum + inv.amount, 0);
+
+            const html = `
+                <div class="grid-3">
+                    <div class="card stat-card">
+                        <span class="stat-label">Today's Jobs</span>
+                        <span class="stat-value">${todayJobs.length}</span>
+                        <div class="text-xs text-muted">${todayJobs.filter(j => j.status === 'Completed').length} completed</div>
+                    </div>
+                    <div class="card stat-card">
+                        <span class="stat-label">Total Revenue (Month)</span>
+                        <span class="stat-value text-success">$${revenue.toFixed(2)}</span>
+                        <div class="text-xs text-muted">Via Stripe Integration</div>
+                    </div>
+                    <div class="card stat-card">
+                        <span class="stat-label">Low Stock Alerts</span>
+                        <span class="stat-value text-danger">${store.data.inventory.filter(i => i.qty < 5).length}</span>
+                        <div class="text-xs text-muted">Items need restocking</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold">Today's Schedule</h3>
+                            <button class="btn btn-primary btn-sm" onclick="openNewJobModal()">+ New Job</button>
+                        </div>
+                        ${todayJobs.length === 0 ? 
+                            `<div class="p-4 text-center text-muted">No jobs scheduled for today.</div>` : 
+                            `<div class="flex flex-col gap-2">
+                                ${todayJobs.map(job => `
+                                    <div class="flex justify-between items-center p-3 border rounded bg-slate-50">
+                                        <div>
+                                            <div class="font-semibold">${job.customerName}</div>
+                                            <div class="text-xs text-muted">${job.address} • ${job.notes}</div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="badge ${getStatusBadgeClass(job.status)}">${job.status}</span>
+                                            ${job.status !== 'Completed' ? `<button class="btn btn-secondary btn-sm" onclick="updateJobStatus(${job.id}, 'Completed')">Complete</button>` : ''}
+                                            <button class="btn btn-secondary btn-sm" onclick="openInvoiceModal(${job.id})">Invoice</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>`
+                        }
+                    </div>
+                </div>
+            `;
+            els.mainContent.innerHTML = html;
+        }
+
+        // --- CALENDAR VIEW ---
+        function renderCalendar() {
+            // Simple calendar generation for current month
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDayIndex = new Date(year, month, 1).getDay(); // 0 = Sun
+            
+            let html = `<div class="card"><div class="calendar-grid">`;
+            
+            // Headers
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
+                html += `<div class="calendar-day-header">${d}</div>`;
+            });
+
+            // Empty slots
+            for(let i=0; i<firstDayIndex; i++) {
+                html += `<div class="calendar-day bg-slate-50"></div>`;
+            }
+
+            // Days
+            for(let d=1; d<=daysInMonth; d++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const jobs = store.data.jobs.filter(j => j.date === dateStr);
+                
+                html += `
+                    <div class="calendar-day">
+                        <div class="day-number">${d}</div>
+                        ${jobs.map(j => `
+                            <div class="job-chip" onclick="renderView('jobs')">
+                                <strong>${j.customerName.split(' ')[0]}</strong>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            html += `</div></div>`;
+            els.mainContent.innerHTML = html;
+        }
+
+        // --- JOBS VIEW ---
+        function renderJobs() {
+            const html = `
+                <div class="card">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Search jobs..." style="width: 250px;">
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="openNewJobModal()">+ Create Job</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Address</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${store.data.jobs.map(job => `
+                                    <tr>
+                                        <td>${job.date}</td>
+                                        <td>
+                                            <div class="font-semibold">${job.customerName}</div>
+                                        </td>
+                                        <td class="text-muted">${job.address}</td>
+                                        <td><span class="badge ${getStatusBadgeClass(job.status)}">${job.status}</span></td>
+                                        <td>
+                                            <div class="flex gap-2">
+                                                ${job.status === 'Scheduled' ? `<button class="btn btn-secondary btn-sm" onclick="updateJobStatus(${job.id}, 'In Progress')">Start</button>` : ''}
+                                                ${job.status === 'In Progress' ? `<button class="btn btn-secondary btn-sm" onclick="updateJobStatus(${job.id}, 'Completed')">Complete</button>` : ''}
+                                                ${job.status === 'Completed' && !store.data.invoices.find(i => i.jobId === job.id) ? `<button class="btn btn-primary btn-sm" onclick="openInvoiceModal(${job.id})">Invoice</button>` : ''}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            els.mainContent.innerHTML = html;
+        }
+
+        // --- INVENTORY VIEW ---
+        function renderInventory() {
+            const html = `
+                <div class="card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold">Truck Inventory</h3>
+                        <button class="btn btn-primary btn-sm" onclick="openAddInventoryModal()">+ Add Item</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>SKU</th>
+                                    <th>Unit Price</th>
+                                    <th>Stock Level</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${store.data.inventory.map(item => `
+                                    <tr>
+                                        <td class="font-semibold">${item.name}</td>
+                                        <td class="text-muted text-xs">${item.sku}</td>
+                                        <td>$${item.price.toFixed(2)}</td>
+                                        <td>${item.qty}</td>
+                                        <td>
+                                            <span class="badge ${item.qty < 5 ? 'badge-warning' : 'badge-success'}">
+                                                ${item.qty < 5 ? 'Low Stock' : 'In Stock'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            els.mainContent.innerHTML = html;
+        }
+
+        // --- INVOICES VIEW ---
+        function renderInvoices() {
+            const html = `
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${store.data.invoices.map(inv => `
+                                    <tr>
+                                        <td>#${inv.id}</td>
+                                        <td>${inv.date}</td>
+                                        <td>${inv.customerName}</td>
+                                        <td class="font-bold">$${inv.amount.toFixed(2)}</td>
+                                        <td><span class="badge badge-success">Paid</span></td>
+                                        <td><button class="btn btn-secondary btn-sm" onclick="showToast('Receipt sent to customer')">Send Receipt</button></td>
+                                    </tr>
+                                `).join('')}
+                                ${store.data.invoices.length === 0 ? '<tr><td colspan="6" class="p-4 text-center text-muted">No invoices yet.</td></tr>' : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            els.mainContent.innerHTML = html;
+        }
+
+        /**
+         * MODALS & FORMS
+         */
+        function openModal(contentHtml) {
+            els.modalContainer.innerHTML = `<div class="modal-content">${contentHtml}</div>`;
+            els.modalContainer.classList.remove('hidden');
+            
+            // Close on outside click
+            els.modalContainer.onclick = (e) => {
+                if(e.target === els.modalContainer) closeModal();
+            }
+        }
+
+        function closeModal() {
+            els.modalContainer.classList.add('hidden');
+        }
+
+        function openNewJobModal() {
+            const html = `
+                <h3 class="font-bold text-lg mb-4">Create New Job</h3>
+                <form id="create-job-form" class="flex flex-col gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Customer Name</label>
+                        <input type="text" name="customerName" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" required placeholder="123 Street St">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" required value="${new Date().toISOString().split('T')[0]}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Issue / Notes</label>
+                        <textarea name="notes" rows="3" placeholder="Describe the problem..."></textarea>
+                    </div>
+                    <div class="flex justify-between mt-4">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Job</button>
+                    </div>
+                </form>
+            `;
+            openModal(html);
+            
+            document.getElementById('create-job-form').onsubmit = (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const job = {
+                    customerId: 999, // Mock
+                    customerName: formData.get('customerName'),
+                    address: formData.get('address'),
+                    date: formData.get('date'),
+                    notes: formData.get('notes'),
+                    assignedTo: store.currentUser.id
+                };
+                store.addJob(job);
+                closeModal();
+                renderView('jobs');
+                showToast('Job created successfully');
+            };
+        }
+
+        function openAddInventoryModal() {
+            const html = `
+                <h3 class="font-bold text-lg mb-4">Add Inventory Item</h3>
+                <form id="add-inv-form" class="flex flex-col gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">SKU</label>
+                            <input type="text" name="sku" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Initial Qty</label>
+                            <input type="number" name="qty" required min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit Price ($)</label>
+                        <input type="number" name="price" required step="0.01">
+                    </div>
+                    <div class="flex justify-between mt-4">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Item</button>
+                    </div>
+                </form>
+            `;
+            openModal(html);
+            document.getElementById('add-inv-form').onsubmit = (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const item = {
+                    name: formData.get('name'),
+                    sku: formData.get('sku'),
+                    qty: parseInt(formData.get('qty')),
+                    price: parseFloat(formData.get('price'))
+                };
+                store.addInventory(item);
+                closeModal();
+                renderView('inventory');
+                showToast('Item added to inventory');
+            };
+        }
+
+        function openInvoiceModal(jobId) {
+            const job = store.data.jobs.find(j => j.id === jobId);
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Generate line items options from inventory
+            const inventoryOptions = store.data.inventory.map(i => 
+                `<option value="${i.id}" data-price="${i.price}">${i.name} (Stock: ${i.qty}) - $${i.price}</option>`
+            ).join('');
+
+            const html = `
+                <h3 class="font-bold text-lg mb-4">Checkout: ${job.customerName}</h3>
+                <form id="invoice-form" class="flex flex-col gap-4">
+                    <input type="hidden" name="jobId" value="${jobId}">
+                    
+                    <div class="bg-slate-50 p-3 rounded border text-sm text-muted">
+                        <strong>Job Notes:</strong> ${job.notes} <br>
+                        <strong>Address:</strong> ${job.address}
+                    </div>
+
+                    <div class="border rounded p-4">
+                        <h4 class="font-semibold mb-2">Line Items</h4>
+                        <div id="line-items" class="flex flex-col gap-2">
+                            <!-- Dynamic Items -->
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm mt-2 w-full" onclick="addInvoiceItem()">+ Add Part/Material</button>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold">Total Due:</span>
+                        <span class="font-bold text-xl text-primary" id="invoice-total">$0.00</span>
+                    </div>
+
+                    <div class="flex justify-between mt-4">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Charge Card (Stripe)</button>
+                    </div>
+                </form>
+            `;
+            openModal(html);
+            addInvoiceItem(); // Add first empty row
+
+            // Event delegation for dynamic inputs
+            document.getElementById('invoice-form').onsubmit = (e) => {
+                e.preventDefault();
+                // Simulate Payment Processing
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Processing...';
+                submitBtn.disabled = true;
+
+                setTimeout(() => {
+                    const total = parseFloat(document.getElementById('invoice-total').textContent.replace('$',''));
+                    
+                    // Create Invoice
+                    const invoice = {
+                        id: Math.floor(Math.random() * 10000),
+                        jobId: jobId,
+                        customerName: job.customerName,
+                        amount: total,
+                        status: 'Paid',
+                        date: today
+                    };
+                    store.data.invoices.push(invoice);
+                    
+                    // Deduct Inventory (Logic simplified)
+                    const rows = document.querySelectorAll('.line-item-row');
+                    rows.forEach(row => {
+                        const select = row.querySelector('select');
+                        const qtyInput = row.querySelector('.item-qty');
+                        if(select.value && qtyInput.value > 0) {
+                            store.deductInventory(parseInt(select.value), parseInt(qtyInput.value));
+                        }
+                    });
+                    store.save();
+
+                    // Update Job Status
+                    store.updateJobStatus(jobId, 'Completed');
+                    
+                    closeModal();
+                    renderView('dashboard');
+                    showToast(`Payment of $${total.toFixed(2)} successful via Stripe`);
+                }, 1500);
+            };
+        }
+
+        function addInvoiceItem() {
+            const container = document.getElementById('line-items');
+            const index = container.children.length;
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-start line-item-row';
+            div.innerHTML = `
+                <select class="item-select flex-1" onchange="calculateTotal()">
+                    <option value="">Select Part...</option>
+                    ${store.data.inventory.map(i => `<option value="${i.id}" data-price="${i.price}">${i.name} ($${i.price})</option>`).join('')}
+                </select>
+                <input type="number" class="item-qty w-20" value="1" min="1" onchange="calculateTotal()">
+                <button type="button" class="text-danger" onclick="this.parentElement.remove(); calculateTotal()">✕</button>
+            `;
+            container.appendChild(div);
+        }
+
+        window.calculateTotal = function() {
+            let total = 0;
+            document.querySelectorAll('.line-item-row').forEach(row => {
+                const select = row.querySelector('select');
+                const qty = row.querySelector('input').value;
+                if(select.selectedIndex > 0) {
+                    const price = parseFloat(select.options[select.selectedIndex].dataset.price);
+                    total += price * qty;
+                }
+            });
+            // Add Labor mock
+            const labor = 85.00; 
+            total += labor;
+            
+            document.getElementById('invoice-total').textContent = '$' + total.toFixed(2);
+        }
+
+        /**
+         * UTILS & HELPERS
+         */
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'Completed': return 'badge-success';
+                case 'In Progress': return 'badge-info';
+                case 'Scheduled': return 'badge-warning';
+                default: return '';
+            }
+        }
+
+        function updateJobStatus(id, status) {
+            store.updateJobStatus(id, status);
+            // Refresh current view
+            const activeView = document.querySelector('.nav-item.active').dataset.view;
+            renderView(activeView);
+            showToast(`Job marked as ${status}`);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if(type === 'error') toast.style.backgroundColor = 'var(--danger)';
+            toast.innerHTML = `
+                <span>${type === 'success' ? '✓' : '⚠'}</span>
+                <span>${message}</span>
+            `;
+            els.toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+    </script>
+</body>
+</html>
