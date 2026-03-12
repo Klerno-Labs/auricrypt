@@ -14,10 +14,10 @@ export default function InvoicesPage() {
   const { jobs, inventory, addInvoice, updateInvoiceStatus, invoices } = useAppStore();
   
   // Form State
-  const [selectedJobId, setSelectedJobId] = useState<string>(&quot;");
+  const [selectedJobId, setSelectedJobId] = useState<string>("");
   const [laborCharge, setLaborCharge] = useState<number>(0);
   const [lineItems, setLineItems] = useState<InvoiceItem[]>([]);
-  const [customerEmail, setCustomerEmail] = useState<string>(&quot;");
+  const [customerEmail, setCustomerEmail] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const selectedJob = jobs.find(j => j.id === selectedJobId);
@@ -73,7 +73,7 @@ export default function InvoicesPage() {
     const newInvoice: Invoice = {
       id: `inv-${Date.now()}`,
       jobId: selectedJobId,
-      customerId: selectedJob?.customerId || &quot;",
+      customerId: selectedJob?.customerId || "",
       customerEmail: customerEmail,
       items: lineItems,
       laborCharge,
@@ -151,7 +151,7 @@ export default function InvoicesPage() {
               <select 
                 className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
                 onChange={(e) => e.target.value && handleAddItem(e.target.value)}
-                defaultValue="&quot;
+                defaultValue=""
               >
                 <option value="" disabled>Add Part from Inventory</option>
                 {inventory.map(item => (

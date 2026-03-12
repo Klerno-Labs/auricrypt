@@ -17,7 +17,7 @@ export default function LoginPage() {
     // Mock authentication logic
     setTimeout(() => {
       setIsLoading(false)
-      router.push(&quot;/dashboard")
+      router.push("/dashboard")
     }, 1000)
   }
 
@@ -44,7 +44,7 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter>
             <Button className="w-full" type="submit" disabled={isLoading}>
-              {isLoading ? &quot;Signing in..." : "Sign In"}
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </CardFooter>
         </form>

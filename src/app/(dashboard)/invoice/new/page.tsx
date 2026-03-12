@@ -19,7 +19,7 @@ type LineItem = {
 export default function NewInvoicePage() {
   const [customerEmail, setCustomerEmail] = useState("")
   const [items, setItems] = useState<LineItem[]>([
-    { id: &quot;1", description: "", quantity: 1, price: 0, total: 0 }
+    { id: "1", description: "", quantity: 1, price: 0, total: 0 }
   ])
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -110,7 +110,7 @@ export default function NewInvoicePage() {
                       <Input 
                         placeholder="Description (e.g. Labor, Pipe Repair)" 
                         value={item.description}
-                        onChange={(e) => updateItem(item.id, &quot;description", e.target.value)}
+                        onChange={(e) => updateItem(item.id, "description", e.target.value)}
                       />
                     </div>
                     <div className="w-24">
@@ -119,7 +119,7 @@ export default function NewInvoicePage() {
                         placeholder="Qty" 
                         min="1"
                         value={item.quantity || ""}
-                        onChange={(e) => updateItem(item.id, &quot;quantity", parseFloat(e.target.value) || 0)}
+                        onChange={(e) => updateItem(item.id, "quantity", parseFloat(e.target.value) || 0)}
                       />
                     </div>
                     <div className="w-32">
@@ -129,7 +129,7 @@ export default function NewInvoicePage() {
                         min="0"
                         step="0.01"
                         value={item.price || ""}
-                        onChange={(e) => updateItem(item.id, &quot;price", parseFloat(e.target.value) || 0)}
+                        onChange={(e) => updateItem(item.id, "price", parseFloat(e.target.value) || 0)}
                       />
                     </div>
                     <div className="w-28 text-right font-medium pt-2 text-slate-700">
@@ -180,7 +180,7 @@ export default function NewInvoicePage() {
                 disabled={isProcessing || total <= 0}
               >
                 {isProcessing ? (
-                  &quot;Processing..."
+                  "Processing..."
                 ) : (
                   <>
                     <CreditCard className="h-5 w-5 mr-2" />

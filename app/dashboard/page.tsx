@@ -64,7 +64,7 @@ export default function DashboardPage() {
                     <p className="text-sm text-muted-foreground">1234 Main St, Springfield</p>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Status: {i === 1 ? &quot;In Progress" : "Scheduled"}
+                    Status: {i === 1 ? "In Progress" : "Scheduled"}
                   </div>
                   <Button size="sm">View</Button>
                 </div>

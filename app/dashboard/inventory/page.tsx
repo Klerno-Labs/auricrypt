@@ -43,7 +43,7 @@ export default function InventoryPage() {
               <tbody>
                 <tr className="border-b transition-colors hover:bg-muted/50">
                   <td className="p-4 align-middle font-medium">PIP-001</td>
-                  <td className="p-4 align-middle">1/2&quot; Copper Pipe</td>
+                  <td className="p-4 align-middle">1/2" Copper Pipe</td>
                   <td className="p-4 align-middle">ft</td>
                   <td className="p-4 align-middle text-right">150</td>
                   <td className="p-4 align-middle text-center">
@@ -54,7 +54,7 @@ export default function InventoryPage() {
                 </tr>
                 <tr className="border-b transition-colors hover:bg-muted/50">
                   <td className="p-4 align-middle font-medium">VNT-002</td>
-                  <td className="p-4 align-middle">2&quot; PVC Elbow</td>
+                  <td className="p-4 align-middle">2" PVC Elbow</td>
                   <td className="p-4 align-middle">piece</td>
                   <td className="p-4 align-middle text-right">4</td>
                   <td className="p-4 align-middle text-center">

@@ -32,7 +32,7 @@ export function StatsCard({ title, value, icon: Icon, description, trend }: Stat
             "text-xs mt-1",
             trend.isPositive ? "text-green-600" : "text-red-600"
           )}>
-            {trend.isPositive ? &quot;+" : ""}{trend.value}% from last week
+            {trend.isPositive ? "+" : ""}{trend.value}% from last week
           </p>
         )}
       </CardContent>

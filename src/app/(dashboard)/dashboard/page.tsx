@@ -44,7 +44,7 @@ export default function DashboardPage() {
           <p className="text-slate-500 mt-1">Welcome back, here&apos;s your schedule for today.</p>
         </div>
         <div className="text-sm text-slate-500 font-medium">
-          {new Date().toLocaleDateString(&quot;en-US", { weekday: 'long', month: 'long', day: 'numeric' })}
+          {new Date().toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' })}
         </div>
       </div>
 
@@ -123,7 +123,7 @@ export default function DashboardPage() {
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Pipe Fittings (1/2&quot;)</span>
+                  <span>Pipe Fittings (1/2")</span>
                   <span className="font-mono text-blue-400">42</span>
                 </div>
                 <div className="flex justify-between text-sm">
