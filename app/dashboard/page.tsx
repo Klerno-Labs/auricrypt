@@ -50,7 +50,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Today's Schedule</CardTitle>
+            <CardTitle>Today&apos;s Schedule</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <div className="space-y-4">
@@ -64,7 +64,7 @@ export default function DashboardPage() {
                     <p className="text-sm text-muted-foreground">1234 Main St, Springfield</p>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Status: {i === 1 ? "In Progress" : "Scheduled"}
+                    Status: {i === 1 ? &quot;In Progress" : "Scheduled"}
                   </div>
                   <Button size="sm">View</Button>
                 </div>

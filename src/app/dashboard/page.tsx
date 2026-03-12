@@ -38,7 +38,7 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className="text-muted-foreground">
-            Welcome back, here&apos;s what's happening today.
+            Welcome back, here&apos;s what&apos;s happening today.
           </p>
         </div>
         <Button>

@@ -9,7 +9,7 @@ import { MapPin, Clock, MoreHorizontal, CheckCircle, PlayCircle } from "lucide-r
 import { useState } from "react";
 
 const statusColors: Record<string, string> = {
-  "scheduled": "bg-blue-100 text-blue-800 hover:bg-blue-200",
+  &quot;scheduled": "bg-blue-100 text-blue-800 hover:bg-blue-200",
   "in-progress": "bg-amber-100 text-amber-800 hover:bg-amber-200",
   "completed": "bg-green-100 text-green-800 hover:bg-green-200",
   "cancelled": "bg-gray-100 text-gray-800 hover:bg-gray-200",
@@ -17,7 +17,7 @@ const statusColors: Record<string, string> = {
 
 export default function JobsPage() {
   const { jobs, updateJobStatus } = useAppStore();
-  const [filter, setFilter] = useState<string>("all");
+  const [filter, setFilter] = useState<string>(&quot;all");
 
   const filteredJobs = filter === "all" 
     ? jobs 
@@ -37,13 +37,13 @@ export default function JobsPage() {
       </div>
 
       <div className="flex gap-2">
-        {["all", "scheduled", "in-progress", "completed"].map((status) => (
+        {[&quot;all", "scheduled", "in-progress", "completed"].map((status) => (
           <Button
             key={status}
             variant={filter === status ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter(status)}
-            className="capitalize"
+            className="capitalize&quot;
           >
             {status.replace("-", " ")}
           </Button>
@@ -68,20 +68,20 @@ export default function JobsPage() {
                     </span>
                   </div>
                 </div>
-                <Badge className={statusColors[job.status]}>{job.status.replace("-", " ")}</Badge>
+                <Badge className={statusColors[job.status]}>{job.status.replace(&quot;-", " ")}</Badge>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600 max-w-2xl">
-                  <span className="font-medium">Notes:</span> {job.notes || "No additional notes provided."}
+                  <span className="font-medium">Notes:</span> {job.notes || &quot;No additional notes provided."}
                 </p>
                 <div className="flex gap-2">
                   {job.status === "scheduled" && (
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => handleStatusChange(job.id, "in-progress")}
+                      onClick={() => handleStatusChange(job.id, &quot;in-progress")}
                     >
                       <PlayCircle className="mr-2 h-4 w-4" />
                       Start Job
@@ -90,7 +90,7 @@ export default function JobsPage() {
                   {job.status === "in-progress" && (
                     <Button 
                       size="sm"
-                      onClick={() => handleStatusChange(job.id, "completed")}
+                      onClick={() => handleStatusChange(job.id, &quot;completed")}
                     >
                       <CheckCircle className="mr-2 h-4 w-4" />
                       Complete Job
