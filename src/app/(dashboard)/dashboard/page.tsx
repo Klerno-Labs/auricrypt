@@ -41,7 +41,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Welcome back, here's your schedule for today.</p>
+          <p className="text-slate-500 mt-1">Welcome back, here&apos;s your schedule for today.</p>
         </div>
         <div className="text-sm text-slate-500 font-medium">
           {new Date().toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' })}

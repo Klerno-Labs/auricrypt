@@ -10,7 +10,7 @@ export default function ResetPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">Reset Password</CardTitle>
-          <CardDescription>Enter your email address and we'll send you a link to reset your password.</CardDescription>
+          <CardDescription>Enter your email address and we&apos;ll send you a link to reset your password.</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4">
